@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
 import Sketch from 'react-p5';
 import MersenneTwister from 'mersenne-twister';
+import kanji from './kanji.json';
 
 /*
 Create your Custom style to be turned into a EthBlock.art Mother NFT
