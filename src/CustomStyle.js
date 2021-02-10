@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
-import Sketch from "react-p5";
-import kanji from './kanji.json';
+import Sketch from 'react-p5';
+import kanji from '../public/blockbase/kanji.json';
+import MersenneTwister from 'mersenne-twister';
 
 /*
 Create your Custom style to be turned into a EthBlock.art Mother NFT
@@ -60,8 +61,8 @@ const CustomStyle = ({
     // Keep reference of canvas element for snapshots
     let _p5 = p5.createCanvas(width, height).parent(canvasParentRef);
     canvasRef.current = p5;
-    p5.textFont("Sawarabi Mincho");
-    p5.noLoop()
+    // p5.textFont('Sawarabi Mincho');
+    // p5.noLoop();
 
     attributesRef.current = () => {
       return {
@@ -95,28 +96,35 @@ const CustomStyle = ({
   // b) individual transactions in a block (seed)
   // c) custom parameters creators can customize (mod1, color1)
   // d) final drawing reacting to screen resizing (M)
-  
+
   const draw = (p5) => {
-    let coordinate = p5.random (5,25)
-    let randomN = p5.int(p5.random(3,6))
-    let angle = p5.PI/ randomN
+    p5.textFont('Sawarabi Mincho');
+    p5.background('#ffffff');
+
+    let seed = parseInt(hash.slice(0, 16), 16);
+
+    shuffleBag.current = new MersenneTwister(seed);
+
+    let coordinate = p5.map(shuffleBag.current.random(), 0, 1, 5, 25);
+    let randomN = p5.int(p5.map(shuffleBag.current.random(), 0, 1, 3, 6));
+    let angle = p5.PI / randomN;
     let col = {
-      r: p5.random(0,255),
-      g: p5.random(0,255),
-      b: p5.random(0,255),
+      r: p5.map(shuffleBag.current.random(), 0, 1, 0, 255),
+      g: p5.map(shuffleBag.current.random(), 0, 1, 0, 255),
+      b: p5.map(shuffleBag.current.random(), 0, 1, 0, 255),
+    };
+    let kanjiIndex = p5.int(p5.map(shuffleBag.current.random(), 0, 1, 0, 2994));
+    p5.background(col.r, col.g, col.b, 50);
+    p5.textSize(220 * mod1);
+    p5.translate(height / 2, width / 2);
+    for (var i = 0; i < randomN * 3; i++) {
+      p5.fill(80);
+      p5.rotate(angle);
+      p5.text(kanji[kanjiIndex], coordinate, coordinate);
     }
-    let kanjiIndex = p5.int(p5.random(0,2994))
-    p5.background(col.r,col.g,col.b, 50);
-    p5.textSize(120)
-    p5.translate(height/2, width/2);
-    for(var i = 0; i < randomN*3 ; i++){
-      p5.fill(80)
-      p5.rotate(angle)
-      p5.text(kanji[kanjiIndex], coordinate, coordinate)
-    }
-    p5.rotate(p5.PI)
-    p5.fill(col.r, col.g, col.b)
-    p5.text(kanji[kanjiIndex], coordinate, coordinate)
+    p5.rotate(p5.PI);
+    p5.fill(col.r, col.g, col.b);
+    p5.text(kanji[kanjiIndex], coordinate, coordinate);
   };
 
   return <Sketch setup={setup} draw={draw} windowResized={handleResize} />;
