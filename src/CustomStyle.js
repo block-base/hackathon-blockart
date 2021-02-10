@@ -1,6 +1,5 @@
 import React, { useRef } from 'react';
-import Sketch from 'react-p5';
-import MersenneTwister from 'mersenne-twister';
+import Sketch from "react-p5";
 import kanji from './kanji.json';
 
 /*
@@ -27,6 +26,17 @@ Getting started:
  - check out p5.js documentation for examples!
 */
 
+// Logic
+// choosing Kanji
+// complex kanji with difficulty
+
+// bgColor and textColor
+// genesisblockはethereum color
+// gradation text color if there are Maker transaction
+
+// coordinate
+// mod
+
 let DEFAULT_SIZE = 500;
 const CustomStyle = ({
   block,
@@ -50,6 +60,8 @@ const CustomStyle = ({
     // Keep reference of canvas element for snapshots
     let _p5 = p5.createCanvas(width, height).parent(canvasParentRef);
     canvasRef.current = p5;
+    p5.textFont("Sawarabi Mincho");
+    p5.noLoop()
 
     attributesRef.current = () => {
       return {
@@ -83,38 +95,28 @@ const CustomStyle = ({
   // b) individual transactions in a block (seed)
   // c) custom parameters creators can customize (mod1, color1)
   // d) final drawing reacting to screen resizing (M)
+  
   const draw = (p5) => {
-    let WIDTH = width;
-    let HEIGHT = height;
-    let DIM = Math.min(WIDTH, HEIGHT);
-    let M = DIM / DEFAULT_SIZE;
-
-    p5.background(background);
-
-    // reset shuffle bag
-    let seed = parseInt(hash.slice(0, 16), 16);
-    shuffleBag.current = new MersenneTwister(seed);
-    let objs = block.transactions.map((t) => {
-      let seed = parseInt(t.hash.slice(0, 16), 16);
-      return {
-        y: shuffleBag.current.random(),
-        x: shuffleBag.current.random(),
-        radius: seed / 1000000000000000,
-      };
-    });
-
-    // example assignment of hoisted value to be used as NFT attribute later
-    hoistedValue.current = 42;
-
-    objs.map((dot, i) => {
-      p5.stroke(color1);
-      p5.strokeWeight(1 + mod2 * 10);
-      p5.ellipse(
-        200 * dot.y * 6 * M,
-        100 * dot.x * 6 * M,
-        dot.radius * M * mod1
-      );
-    });
+    let coordinate = p5.random (5,25)
+    let randomN = p5.int(p5.random(3,6))
+    let angle = p5.PI/ randomN
+    let col = {
+      r: p5.random(0,255),
+      g: p5.random(0,255),
+      b: p5.random(0,255),
+    }
+    let kanjiIndex = p5.int(p5.random(0,2994))
+    p5.background(col.r,col.g,col.b, 50);
+    p5.textSize(120)
+    p5.translate(height/2, width/2);
+    for(var i = 0; i < randomN*3 ; i++){
+      p5.fill(80)
+      p5.rotate(angle)
+      p5.text(kanji[kanjiIndex], coordinate, coordinate)
+    }
+    p5.rotate(p5.PI)
+    p5.fill(col.r, col.g, col.b)
+    p5.text(kanji[kanjiIndex], coordinate, coordinate)
   };
 
   return <Sketch setup={setup} draw={draw} windowResized={handleResize} />;
