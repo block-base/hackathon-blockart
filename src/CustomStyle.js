@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import Sketch from 'react-p5';
-// import kanji from '../public/blockbase/kanji.json';
-import kanji from './kanji.json';
+import kanji from '../public/blockbase/kanji.json';
+// import kanji from './kanji.json';
 import MersenneTwister from 'mersenne-twister';
 
 /*
