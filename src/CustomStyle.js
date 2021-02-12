@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
 import Sketch from 'react-p5';
-import kanji from '../public/blockbase/kanji.json';
+// import kanji from '../public/blockbase/kanji.json';
+import kanji from './kanji.json';
 import MersenneTwister from 'mersenne-twister';
 
 /*
@@ -27,17 +28,6 @@ Getting started:
  - check out p5.js documentation for examples!
 */
 
-// Logic
-// choosing Kanji
-// complex kanji with difficulty
-
-// bgColor and textColor
-// genesisblockはethereum color
-// gradation text color if there are Maker transaction
-
-// coordinate
-// mod
-
 let DEFAULT_SIZE = 500;
 const CustomStyle = ({
   block,
@@ -47,22 +37,23 @@ const CustomStyle = ({
   height,
   handleResize,
   mod1 = 0.75, // Example: replace any number in the code with mod1, mod2, or color values
-  mod2 = 0.25,
-  color1 = '#4f83f1',
-  background = '#ccc',
+  mod2 = 1.1
 }) => {
   const shuffleBag = useRef();
   const hoistedValue = useRef();
 
-  const { hash } = block;
+  const { hash, difficulty, transactions } = block;
+
+  const mappedTo = transactions.map(x => x.to);
+  const makerTransactions = mappedTo.filter( to => to === "0x4156D3342D5c385a87D264F90653733592000581");
+
+  const isMakerBlock = makerTransactions.length > 10
 
   // setup() initializes p5 and the canvas element, can be mostly ignored in our case (check draw())
   const setup = (p5, canvasParentRef) => {
     // Keep reference of canvas element for snapshots
     let _p5 = p5.createCanvas(width, height).parent(canvasParentRef);
     canvasRef.current = p5;
-    // p5.textFont('Sawarabi Mincho');
-    // p5.noLoop();
 
     attributesRef.current = () => {
       return {
@@ -74,13 +65,13 @@ const CustomStyle = ({
         attributes: [
           {
             display_type: 'number',
-            trait_type: 'your trait here number',
+            trait_type: 'number',
             value: hoistedValue.current, // using the hoisted value from within the draw() method, stored in the ref.
           },
-
           {
-            trait_type: 'your trait here text',
-            value: 'replace me',
+            display_type: 'number',
+            trait_type: 'difficulty',
+            value: difficulty,
           },
         ],
       };
@@ -117,14 +108,25 @@ const CustomStyle = ({
     p5.background(col.r, col.g, col.b, 50);
     p5.textSize(220 * mod1);
     p5.translate(height / 2, width / 2);
+    p5.scale(0.8 + 3 * mod2)
+    if(isMakerBlock){
+      p5.fill(160);
+      for (var i = 0; i < randomN * 6; i++) {
+        p5.rotate(angle/2);
+        p5.text(kanji[kanjiIndex], 80, 100);
+      }
+    }
     for (var i = 0; i < randomN * 3; i++) {
       p5.fill(80);
       p5.rotate(angle);
       p5.text(kanji[kanjiIndex], coordinate, coordinate);
     }
-    p5.rotate(p5.PI);
+    if(!isMakerBlock){
+      p5.rotate(p5.PI);
+    }
     p5.fill(col.r, col.g, col.b);
     p5.text(kanji[kanjiIndex], coordinate, coordinate);
+    
   };
 
   return <Sketch setup={setup} draw={draw} windowResized={handleResize} />;
@@ -133,15 +135,13 @@ const CustomStyle = ({
 export default CustomStyle;
 
 const styleMetadata = {
-  name: '',
-  description: '',
+  name: 'Kanji Chain',
+  description: 'Meet the Beauty of "Kanji", the Japanese characters with randomness of blockchain. A block with certain amount of of MakerDao related transactions have special effect.',
   image: '',
-  creator_name: '',
+  creator_name: 'Kenta Suhara, Daiki Kunii',
   options: {
     mod1: 0.4,
-    mod2: 0.1,
-    color1: '#fff000',
-    background: '#000000',
+    mod2: 0.5,
   },
 };
 
