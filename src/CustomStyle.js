@@ -45,7 +45,7 @@ const CustomStyle = ({
   const { hash, difficulty, transactions } = block;
 
   const mappedTo = transactions.map(x => x.to);
-  const makerTransactions = mappedTo.filter( to => to === "0x4156D3342D5c385a87D264F90653733592000581");
+  const makerTransactions = mappedTo.filter( to => to === "0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2");
 
   const isMakerBlock = makerTransactions.length > 10
 
@@ -136,7 +136,7 @@ export default CustomStyle;
 
 const styleMetadata = {
   name: 'Kanji Chain',
-  description: 'Meet the Beauty of "Kanji", the Japanese characters with randomness of blockchain. A block with certain amount of of MakerDao related transactions have special effect.',
+  description: 'Meet the Beauty of "Kanji", the Japanese characters with a randomness of blockchain. A block with certain amount of of MakerDao related transactions have special effect.',
   image: '',
   creator_name: 'Kenta Suhara, Daiki Kunii',
   options: {
