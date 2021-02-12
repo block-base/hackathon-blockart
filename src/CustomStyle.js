@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import Sketch from 'react-p5';
-import kanji from '../public/blockbase/kanji.json';
-// import kanji from './kanji.json';
+// import kanji from '../public/blockbase/kanji.json';
+import kanji from './kanji.json';
 import MersenneTwister from 'mersenne-twister';
 
 /*
@@ -43,11 +43,6 @@ const CustomStyle = ({
   const hoistedValue = useRef();
 
   const { hash, difficulty, transactions } = block;
-
-  const mappedTo = transactions.map(x => x.to);
-  const makerTransactions = mappedTo.filter( to => to === "0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2");
-
-  const isMakerBlock = makerTransactions.length > 10
 
   // setup() initializes p5 and the canvas element, can be mostly ignored in our case (check draw())
   const setup = (p5, canvasParentRef) => {
@@ -91,6 +86,9 @@ const CustomStyle = ({
   const draw = (p5) => {
     p5.textFont('Sawarabi Mincho');
     p5.background('#ffffff');
+    const mappedTo = transactions.map(x => x.to);
+    const makerTransactions = mappedTo.filter( to => to === "0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2");
+    const isMakerBlock = makerTransactions.length > 10
 
     let seed = parseInt(hash.slice(0, 16), 16);
 
